@@ -19,34 +19,33 @@ struct ContentView: View {
             }
             
             if let usage = service.usage {
-                // Session Usage
+                // 5-Hour Session
                 UsageBar(
-                    title: "Session",
-                    value: usage.percentUsed / 100,
-                    subtitle: "Resets in \(usage.resetTimeFormatted)"
+                    title: "5-Hour Session",
+                    value: usage.fiveHourPercent / 100,
+                    subtitle: "Resets in \(usage.fiveHourResetFormatted)"
                 )
                 
-                // Daily Limit (if available)
-                if let daily = usage.dailyPercentUsed {
-                    UsageBar(
-                        title: "Daily",
-                        value: daily / 100,
-                        subtitle: "Resets at midnight"
-                    )
-                }
+                // 7-Day Usage
+                UsageBar(
+                    title: "7-Day Usage", 
+                    value: usage.sevenDayPercent / 100,
+                    subtitle: "Resets in \(usage.sevenDayResetFormatted)"
+                )
                 
-                Divider()
-                
-                // Stats
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Model")
-                            .font(.caption2)
+                // Extra Credits (if enabled)
+                if let used = usage.extraCreditsUsed, let limit = usage.extraCreditsLimit {
+                    Divider()
+                    HStack {
+                        Image(systemName: "creditcard")
+                            .foregroundStyle(.green)
+                        Text("Credits")
+                            .font(.subheadline)
+                        Spacer()
+                        Text("$\(String(format: "%.2f", used)) / $\(limit)")
+                            .font(.caption.monospacedDigit())
                             .foregroundStyle(.secondary)
-                        Text(usage.model ?? "claude-3.5-sonnet")
-                            .font(.caption)
                     }
-                    Spacer()
                 }
                 
             } else if let error = service.error {
@@ -116,6 +115,7 @@ struct UsageBar: View {
     private var color: Color {
         if value > 0.9 { return .red }
         if value > 0.7 { return .orange }
+        if value > 0.5 { return .yellow }
         return .blue
     }
     
@@ -140,8 +140,8 @@ struct UsageBar: View {
     }
 }
 
-// Preview requires Xcode - uncomment when using Xcode:
-// #Preview {
-//     ContentView(service: ClaudeService())
-//         .frame(width: 280)
-// }
+// Preview requires Xcode
+#Preview {
+    ContentView(service: ClaudeService())
+        .frame(width: 280)
+}
