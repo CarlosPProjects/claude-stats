@@ -78,7 +78,7 @@ struct ContentView: View {
             
             Divider()
             
-            // Actions
+            // Actions + Last Updated
             HStack {
                 Button(action: { Task { await service.fetchUsage() } }) {
                     Label("Refresh", systemImage: "arrow.clockwise")
@@ -86,6 +86,14 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
                 .controlSize(.small)
                 .disabled(service.isLoading)
+                
+                Spacer()
+                
+                if let lastUpdated = service.lastUpdated {
+                    Text(lastUpdated, style: .relative)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
                 
                 Spacer()
                 
@@ -99,9 +107,6 @@ struct ContentView: View {
             }
         }
         .padding()
-        .task {
-            await service.fetchUsage()
-        }
     }
 }
 

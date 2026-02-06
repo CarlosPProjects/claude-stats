@@ -6,8 +6,25 @@ class ClaudeService: ObservableObject {
     @Published var usage: UsageData?
     @Published var error: String?
     @Published var isLoading = false
+    @Published var lastUpdated: Date?
     
     private let apiURL = URL(string: "https://api.anthropic.com/api/oauth/usage")!
+    private var refreshTimer: Timer?
+    
+    init() {
+        // Auto-refresh every 2 minutes
+        startAutoRefresh()
+        // Initial fetch
+        Task { await fetchUsage() }
+    }
+    
+    private func startAutoRefresh() {
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                await self?.fetchUsage()
+            }
+        }
+    }
     
     func fetchUsage() async {
         isLoading = true
@@ -42,6 +59,7 @@ class ClaudeService: ObservableObject {
             
             let decoded = try JSONDecoder().decode(OAuthUsageResponse.self, from: data)
             usage = UsageData.from(response: decoded)
+            lastUpdated = Date()
             
         } catch let decodingError as DecodingError {
             error = "Parse error: \(decodingError.localizedDescription)"
