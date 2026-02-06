@@ -7,7 +7,7 @@ class ClaudeService: ObservableObject {
     @Published var error: String?
     @Published var isLoading = false
     
-    private let apiURL = URL(string: "https://api.anthropic.com/v1/settings/usage")!
+    private let apiURL = URL(string: "https://api.anthropic.com/api/oauth/usage")!
     
     func fetchUsage() async {
         isLoading = true
