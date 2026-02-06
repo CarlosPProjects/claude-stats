@@ -53,13 +53,13 @@ class ClaudeService: ObservableObject {
     // MARK: - Token Retrieval
     
     private func getToken() -> String? {
-        // Try keychain first (Claude CLI stores here)
-        if let token = getTokenFromKeychain() {
+        // Try credential files first (no keychain prompt!)
+        if let token = getTokenFromFile() {
             return token
         }
         
-        // Fallback to credential files
-        return getTokenFromFile()
+        // Fallback to keychain (will prompt for password)
+        return getTokenFromKeychain()
     }
     
     private func getTokenFromKeychain() -> String? {
@@ -94,6 +94,7 @@ class ClaudeService: ObservableObject {
         let homeDir = FileManager.default.homeDirectoryForCurrentUser.path
         
         let credPaths = [
+            "\(homeDir)/.claude.json",  // Claude CLI stores here
             "\(homeDir)/.claude/credentials.json",
             "\(homeDir)/.config/claude/credentials.json"
         ]
