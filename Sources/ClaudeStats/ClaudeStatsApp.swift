@@ -16,7 +16,8 @@ struct ClaudeStatsApp: App {
     
     private var statusIcon: String {
         guard let usage = service.usage else { return "chart.pie" }
-        if usage.percentUsed > 80 { return "chart.pie.fill" }
+        // Show filled icon if 5-hour session > 80%
+        if usage.fiveHourPercent > 80 { return "chart.pie.fill" }
         return "chart.pie"
     }
 }
