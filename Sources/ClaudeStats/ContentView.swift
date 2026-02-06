@@ -140,7 +140,8 @@ struct UsageBar: View {
     }
 }
 
-#Preview {
-    ContentView(service: ClaudeService())
-        .frame(width: 280)
-}
+// Preview requires Xcode - uncomment when using Xcode:
+// #Preview {
+//     ContentView(service: ClaudeService())
+//         .frame(width: 280)
+// }
